@@ -322,7 +322,7 @@ arch-chroot /mnt passwd "$usuario":"$passwdusuario":"$passwdusuario"
   write_header "INSTALL COMPLETED"
   print_info "Se copiará una copia del script arch1 en el directorio / root de su nuevo sistema"
   echo
-  cp -R /root/arch1 /mnt/root
+  cp -R /root/Arch1 /mnt/root
   echo
   print_info "Desmontando particiones"
   echo
