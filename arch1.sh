@@ -327,7 +327,6 @@ Pues vamos a ello y continuemos."
   echo
   print_info "Reiniciando el sistema"
   pause_function
-<<<<<<< HEAD
   # BYE
   echo -e "\n\nBBBBBB  YY    YY EEEEEEE"
   echo        "BB  BBB  YY YY   EE     "
@@ -337,6 +336,4 @@ Pues vamos a ello y continuemos."
   echo        "BB  BBB   YYY    EE     "
   echo -e     "BBBBBB    YYY    EEEEEEE\n\n"
   sleep 2s
-=======
->>>>>>> 798d56c2f35726f1f98931460a2edc60b8499bd0
   reboot
