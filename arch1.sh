@@ -196,44 +196,6 @@ pause_function
   echo
   pause_function
 
-#CONTRASEÑA ROOT
-  write_header "CONTRASEÑA ROOT - https://gumerlux.github.io/Blog.GumerLuX/"
-  print_info "  Elegimos una contraseña de administrador 'root'.
-    Es una cuenta de superusuario nos provee de todos los privilegios del sistema
-    Para entrar en sistema:
-    user = root + password"
-  echo
-  echo -e "${Yellow} Escribe tu contraseña: ${fin}"
-  echo
-  read passwdroot
-  echo
-  pause_function
-
-#CREAR CUENTA DE USUARIO
-  write_header "CREAR CUENTA DE USUARIO - https://gumerlux.github.io/Blog.GumerLuX/"
-  print_info "  Creamos una cuenta de usuario.
-    Es la cuenta que nos da acceso a nuestros archivos, directorios y periféricos del sistema
-    Para entrar en sistema:
-    usuario + password"
-  echo
-  echo -e "${Yellow} Escribe tu nombre de usuario: ${fin}"
-  echo
-  read usuario
-  echo
-  pause_function
-
-#CONTRASEÑA USUARIO
-  write_header "CONTRASEÑA USUARIO - https://gumerlux.github.io/Blog.GumerLuX/"
-  print_info "  Elegimos la contraseña de nuestro usuario.
-    Para entrar en sistema:
-    user + password"
-  echo
-  echo -e "${Yellow} Escribe tu contraseña: ${fin}"
-  echo
-  read passwdusuario
-  echo
-  pause_function
-
 #RESUMEN
   write_header "ARCHLINUX ULTIMATE INSTALL - https://gumerlux.github.io/Blog.GumerLuX/"
   print_info "  Antes de empezar hacemos un repaso o lo que vamos ha instalar
@@ -249,8 +211,6 @@ pause_function
   echo -e "    8.${Yellow} En Nombre del PC: ${fin}${Green}[${Gray}$PC${fin}${Green}]${Gray}"
   echo -e "    9.${Yellow} Tu zona horaria es: ${fin}${Green}[${Gray}$ZONE/$SUBZONE${fin}${Green}]${Gray}"
   echo -e "   10.${Yellow} Tu Locale es: ${fin}${Green}[${Gray}$LOCALE${fin}${Green}]${Gray}"
-  echo -e "   11.${Yellow} Password root es: ${fin}${Green}[${Gray}$passwdroot${fin}${Green}]${Gray}"
-  echo -e "   12.${Yellow} Tu usuario es: ${fin}${Green}[${Gray}$usuario${fin}${Green}]${Gray}"
   echo
   print_info "  ${Red}Si por lo contrario tenéis que modificar algún parámetro,
   Crtl + c para salir de la instalación${fin} y empezar de nuevo."
@@ -309,25 +269,71 @@ echo KEYMAP="$idioma" > /mnt/etc/vconsole.conf
 # Configurando GRUB
 arch-chroot /mnt grub-install /dev/"$disco"
 arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
-# Contraseña root
-arch-chroot /mnt passwd"$passwdroot"
-:"$passwdroot"
-# Nombre de usuario
-arch-chroot /mnt useradd -m -g users -G audio,lp,optical,storage,video,wheel,games,power,scanner -s /bin/bash "$usuario"
-# Contraseña de usuario
-arch-chroot /mnt passwd "$usuario":"$passwdusuario":"$passwdusuario"
 
+#FIN DE INSTALACIÓN BASE
+  write_header "FIN DE INSTALACIÓN BASE - https://gumerlux.github.io/Blog.GumerLuX/"
+  print_info "  Con esto nuestro sistema está instalado.
+Para poder iniciarlo tenemos que activar el Administrador del sistema 'root'.
+Dándole una contraseña y agregar un usuario.
+Pues vamos a ello y continuemos."
+  pause_function
+
+#CONTRASEÑA ROOT
+  write_header "CONTRASEÑA ROOT - https://gumerlux.github.io/Blog.GumerLuX/"
+  print_info "  Elegimos una contraseña de administrador 'root'.
+    Es una cuenta de superusuario nos provee de todos los privilegios del sistema
+    Para entrar en sistema:
+    user = root + password"
+  echo
+  echo -e "${Yellow} Escribe tu contraseña: ${fin}"
+  echo
+  # Password root
+  arch-chroot /mnt passwd
+  echo
+  pause_function
+
+#CREAR CUENTA DE USUARIO y CONTRASEÑA
+  write_header "CREAR CUENTA DE USUARIO - https://gumerlux.github.io/Blog.GumerLuX/"
+  print_info "  Creamos la cuenta de usuario.
+    Es la cuenta que nos da acceso a nuestros archivos, directorios y periféricos del sistema
+    Para entrar en sistema:
+    usuario + password"
+  echo
+  echo -e "${Yellow} Escribe tu nombre de usuario: ${fin}"
+  echo
+  read usuario
+  # Crear usuario
+  arch-chroot /mnt useradd -m -g users -G audio,lp,optical,storage,video,wheel,games,power,scanner -s /bin/bash "$usuario"
+  print_info "  Elegimos la contraseña de nuestro usuario.
+    Para entrar en sistema:
+    user + password" 
+  pause_function
+  # Contraseña de usuario
+  arch-chroot /mnt passwd "$usuario"
+  echo
+  pause_function
 
 #FIN DE INSTALACION
-  write_header "INSTALL COMPLETED"
-  print_info "Se copiará una copia del script arch1 en el directorio / root de su nuevo sistema"
+  write_header "INSTALACION COMPLETADA - https://gumerlux.github.io/Blog.GumerLuX/"
+  print_info "Se copiará una copia del script Arch1 en el directorio / root de su nuevo sistema"
+  pause_function
   echo
-  cp -R /root/arch1 /mnt/root
+  cp -R /root/Arch1 /mnt/root
   echo
   print_info "Desmontando particiones"
+  pause_function
   echo
   umount -R /mnt
   echo
   print_info "Reiniciando el sistema"
   pause_function
+  # BYE
+  echo -e "\n\nBBBBBB  YY    YY EEEEEEE"
+  echo        "BB  BBB  YY YY   EE     "
+  echo        "BB  BBB   YYY    EE     "
+  echo        "BBBBBB    YYY    EEEEEE "
+  echo        "BB  BBB   YYY    EE     "
+  echo        "BB  BBB   YYY    EE     "
+  echo -e     "BBBBBB    YYY    EEEEEEE\n\n"
+  sleep 2s
   reboot
