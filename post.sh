@@ -306,7 +306,7 @@ select_root(){
   cp /etc/pacman.con /etc/pacman.conf.olg
   sudo sed -i "37i ILoveCandy" /etc/pacman.conf
   sudo sed -i "/Color/s/^#//g" /etc/pacman.conf
-  sudo sed -i "99i \Include = /etc/pacman.d/mirrorlist" /etc/pacman.conf
+  sudo sed -i "93i \Include = /etc/pacman.d/mirrorlist" /etc/pacman.conf
 
   # Dar color a nano
   write_header "4.B - PONEMOS COLOR A NANO - https://gumerlux.github.io/Blog.GumerLuX/"
