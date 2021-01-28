@@ -243,9 +243,9 @@ select_root(){
   Estos son los parametros que vamos a utilizar."
   echo
   echo -e   1- Activando el NetworkManager y actualizando sistema.
-  echo -e   2- Ponemos el teclado en español
-  echo -e   3- Elegimos los mirrors mas rapidos de ArchLinux
-  echo -e   4- Instalando Elementos basicos, utilidades.
+  echo -e   2- Instalando Elementos basicos, utilidades.
+  echo -e   3- Ponemos el teclado en español
+  echo -e   4- Elegimos los mirrors mas rapidos de ArchLinux
   echo -e   5- Instalacion de AURHelper y configurar color.
   echo -e   6- Instalando el entorno grafico "'escritorio'"
   echo
@@ -259,14 +259,23 @@ select_root(){
   systemctl enable NetworkManager.service
   sudo pacman -Syyu --noconfirm
 
+  # Elementos basicos de Bash y utilidades
+  write_header "2 - ELEMENTOS BASICOS BASH - https://gumerlux.github.io/Blog.GumerLuX/"
+  print_info  " Bash es el shell de linea de comandos:
+  Añadiremos unos programas necesarios para su utilizacion.
+  Utilidades de bash, compresion, DNS, disco 'NTFS/EXT."
+  sudo pacman -Sy bc rsync mlocate bash-completion pkgstats arch-wiki-lite zip unzip unrar p7zip lzop cpio avahi nss-mdns dosfstools exfat-utils f2fs-tools fuse fuse-exfat autofs mtpfs --noconfirm
+  system_ctl enable avahi-daemon.service
+  timedatectl set-ntp true
+
   #Teclado
-  write_header "2 - CONFIGURACION TECLADO - https://gumerlux.github.io/Blog.GumerLuX/"
+  write_header "3 - CONFIGURACION TECLADO - https://gumerlux.github.io/Blog.GumerLuX/"
   print_info "  Fijamos el teclado en el sistema."
   pause_function
   localectl set-x11-keymap es
 
   #Mirrorlist
-  write_header "3 - ACTULIZACION MIRRORS - https://gumerlux.github.io/Blog.GumerLuX/"
+  write_header "4 - ACTULIZACION MIRRORS - https://gumerlux.github.io/Blog.GumerLuX/"
   print_info  "  Elegimos los mirrors mas rapidos de ArchLinux:
   Primero hacemos una copia de seguridad. Instalamos el programa reflector"
   pause_function
@@ -275,24 +284,17 @@ select_root(){
   sudo reflector --verbose --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
   sudo pacman -Syy --noconfirm
 
-    # Elementos basicos de Bash y utilidades
-  write_header "4 - ELEMENTOS BASICOS BASH - https://gumerlux.github.io/Blog.GumerLuX/"
-  print_info  " Bash es el shell de linea de comandos:
-  Añadiremos unos programas necesarios para su utilizacion.
-  Utilidades de bash, compresion, DNS, disco 'NTFS/EXT."
-  sudo pacman -Sy bc rsync mlocate bash-completion pkgstats arch-wiki-lite zip unzip unrar p7zip lzop cpio avahi nss-mdns dosfstools exfat-utils f2fs-tools fuse fuse-exfat autofs mtpfs --noconfirm
-  system_ctl enable avahi-daemon.service
-  timedatectl set-ntp true
-
   #AURhelper
   write_header "5 - INSTALACION DE AUR-HELPER - https://gumerlux.github.io/Blog.GumerLuX/"
   print_info "  Instalamos 'yay', programa para instalar en pacman desde nuestro usuario,
-  sin necesidad de tener permiso de sudo."
+  sin necesidad de tener permiso de sudo.
+  Durante la instalacion de 'yay' os pide el paswword de usuario."
+  echo -e " ${Red} Estar atentos si se pasa, no se finaliza la instalacion y se para${fin}"
   pause_function
   sudo pacman -S git --noconfirm
   git clone https://aur.archlinux.org/yay.git
-  cd yay || exit
-  makepkg -si --noconfirm
+  cd yay
+  makepkg -si
 
   # Configuracion de Pacman, color y ponemos el comococos en la barra
   write_header "5.A - CONFIGURACION DE PACMAN - https://gumerlux.github.io/Blog.GumerLuX/"
@@ -303,10 +305,11 @@ select_root(){
         [multilib]
         include /ete/pacman.d/mirrorlist"
   pause_function
-  cp /etc/pacman.con /etc/pacman.conf.olg
-  sudo sed -i "37i ILoveCandy" /etc/pacman.conf
+  cp /etc/pacman.conf /etc/pacman.conf.olg
   sudo sed -i "/Color/s/^#//g" /etc/pacman.conf
-  sudo sed -i "99i \Include = /etc/pacman.d/mirrorlist" /etc/pacman.conf
+  sudo sed -i "/[multilib]/s/^#//g" /etc/pacman.conf
+  sudo sed -i "37i ILoveCandy" /etc/pacman.conf
+  sudo sed -i "96i \Include = /etc/pacman.d/mirrorlist" /etc/pacman.conf
 
   # Dar color a nano
   write_header "4.B - PONEMOS COLOR A NANO - https://gumerlux.github.io/Blog.GumerLuX/"

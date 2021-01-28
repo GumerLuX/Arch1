@@ -243,19 +243,19 @@ mount /dev/"$disco1" /mnt/boot
 
 if [ "$sistema" = "1" ] 
     then
-	pacstrap /mnt base base-devel linux linux-headers linux-firmware grub os-prober ntfs-3g networkmanager gvfs gvfs-afc gvfs-mtp xdg-user-dirs nano dhcpcd --noconfirm
+	pacstrap /mnt base base-devel linux linux-headers linux-firmware grub os-prober ntfs-3g networkmanager gvfs gvfs-afc gvfs-mtp xdg-user-dirs nano dhcpcd f2fs-tools espeakup brltty jfsutils logrotate netctl reiserfsprogs s-nail usbutils vi openresolv --noconfirm
 elif [ "$sistema" = "2" ]
     then
-        pacstrap /mnt base base-devel linux-hardened linux-hardened-headers linux-firmware grub os-prober ntfs-3g networkmanager gvfs gvfs-afc gvfs-mtp xdg-user-dirs nano dhcpcd --noconfirm
+        pacstrap /mnt base base-devel linux-hardened linux-hardened-headers linux-firmware grub os-prober ntfs-3g networkmanager gvfs gvfs-afc gvfs-mtp xdg-user-dirs nano dhcpcd f2fs-tools espeakup brltty jfsutils logrotate netctl reiserfsprogs s-nail usbutils vi openresolv --noconfirm
 elif [ "$sistema" = "3" ]
     then
-        pacstrap /mnt base base-devel linux-lts linux-lts-headers linux-firmware grub os-prober ntfs-3g networkmanager gvfs gvfs-afc gvfs-mtp xdg-user-dirs nano dhcpcd --noconfirm
+        pacstrap /mnt base base-devel linux-lts linux-lts-headers linux-firmware grub os-prober ntfs-3g networkmanager gvfs gvfs-afc gvfs-mtp xdg-user-dirs nano dhcpcd f2fs-tools espeakup brltty jfsutils logrotate netctl reiserfsprogs s-nail usbutils vi openresolv --noconfirm
 elif [ "$sistema" = "4" ]
     then
-        pacstrap /mnt base base-devel linux-zen linux-zen-headers linux-firmware grub os-prober ntfs-3g networkmanager gvfs gvfs-afc gvfs-mtp xdg-user-dirs nano dhcpcd --noconfirm
+        pacstrap /mnt base base-devel linux-zen linux-zen-headers linux-firmware grub os-prober ntfs-3g networkmanager gvfs gvfs-afc gvfs-mtp xdg-user-dirs nano dhcpcd f2fs-tools espeakup brltty jfsutils logrotate netctl reiserfsprogs s-nail usbutils vi openresolv --noconfirm
 fi
 ## Extras
-pacman -Sy f2fs-tools espeakup brltty jfsutils logrotate netctl reiserfsprogs s-nail usbutils vi openresolv --noconfirm   
+#pacman -Sy f2fs-tools espeakup brltty jfsutils logrotate netctl reiserfsprogs s-nail usbutils vi openresolv --noconfirm   
 # Configurando el sistema
 genfstab -pU /mnt >> /mnt/etc/fstab
 echo "$PC" > /mnt/etc/hostname
