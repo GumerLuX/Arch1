@@ -1,6 +1,6 @@
 #!/bin/bash
-#version: 0.0
-# https://github.com/GumerLuX/arch1.git
+#version: 0.1
+# https://github.com/GumerLuX/Arch1.git
 #shellcheck disable=SC2162
 
 #es
