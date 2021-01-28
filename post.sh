@@ -1,5 +1,5 @@
 #!/bin/bash
-#version: 0.1
+#version: 0.2
 # https://github.com/GumerLuX/arch1.git
 #shellcheck disable=SC2162,SC2034,SC2120
 
@@ -92,22 +92,22 @@ install_grafica(){
     if [ "$op" ]; then
       case $op in
         1)
-        pacman -S nvidia nvidia-settings
+        pacman -Sy nvidia nvidia-settings
         ;;
         2)
-        pacman -S xf86-video-nouveau
+        pacman -Sy xf86-video-nouveau
         ;;
         3)
-        pacman -S xf86-video-ati
+        pacman -Sy xf86-video-ati
         ;;
         4)
-        pacman -S xf86-video-amdgpu amd-ucode
+        pacman -Sy xf86-video-amdgpu amd-ucode
         ;;
         5)
-        pacman -S xf86-video-intel intel-ucode
+        pacman -Sy xf86-video-intel intel-ucode
         ;;
         6)
-        pacman -S virtualbox-guest-utils xf86-video-vmware
+        pacman -Sy virtualbox-guest-utils xf86-video-vmware
         systemctl start vboxservice
         systemctl enable vboxservice
         ;;
@@ -140,23 +140,23 @@ install_escritorio(){
     if [ "$op" ]; then
       case $op in
         1)
-        sudo pacman -S xfce4 xfce4-goodies network-manager-applet
-        sudo pacman -S lightdm-gtk-greeter
+        sudo pacman -Sy xfce4 xfce4-goodies network-manager-applet
+        sudo pacman -Sy lightdm-gtk-greeter
         systemctl enable lightdm.service
         ;;
         2)
-        sudo pacman -S gnome gnome-extra gnome-tweak-tool
-        sudo pacman -S gdm
+        sudo pacman -Sy gnome gnome-extra gnome-tweak-tool
+        sudo pacman -Sy gdm
         systemctl enable gdm.service
         ;;
         3)
-        sudo pacman -S plasma kde-applications
-        sudo pacman -S plasma-wayland-session ffmpegthumbs discover packagekit-qt5
+        sudo pacman -Sy plasma kde-applications
+        sudo pacman -Sy plasma-wayland-session ffmpegthumbs discover packagekit-qt5
         systemctl enable sddm.service
         ;;
         4)
-        sudo pacman -S cinnamon
-        sudo pacman -S lightdm-gtk-greeter
+        sudo pacman -Sy cinnamon
+        sudo pacman -Sy lightdm-gtk-greeter
         systemctl enable lightdm.service
         ;;
         "b")
@@ -230,7 +230,7 @@ select_root(){
   print_info "Se copiará una copia del script Arch1 en el directorio / home/user de su nuevo sistema"
   pause_function
   echo
-  cp -R /root/Arch1 ~/Arch1
+  cp -R /root/Arch1 ~/
   echo
   print_info "Saliendo del script"
   return
@@ -257,14 +257,15 @@ select_root(){
   Y Actualizamos el sistema. Activamos sudo por primera vez"
   pause_function
   systemctl enable NetworkManager.service
-  sudo pacman -Syyu --noconfirm
+  sudo pacman -Syyu 
 
   # Elementos basicos de Bash y utilidades
   write_header "2 - ELEMENTOS BASICOS BASH - https://gumerlux.github.io/Blog.GumerLuX/"
   print_info  " Bash es el shell de linea de comandos:
   Añadiremos unos programas necesarios para su utilizacion.
   Utilidades de bash, compresion, DNS, disco 'NTFS/EXT."
-  sudo pacman -Sy bc rsync mlocate bash-completion pkgstats arch-wiki-lite zip unzip unrar p7zip lzop cpio avahi nss-mdns dosfstools exfat-utils f2fs-tools fuse fuse-exfat autofs mtpfs --noconfirm
+  pause_function
+  sudo pacman -Sy bc rsync mlocate bash-completion pkgstats arch-wiki-lite zip unzip unrar p7zip lzop cpio avahi nss-mdns dosfstools exfat-utils f2fs-tools fuse fuse-exfat autofs mtpfs 
   system_ctl enable avahi-daemon.service
   timedatectl set-ntp true
 
@@ -280,9 +281,9 @@ select_root(){
   Primero hacemos una copia de seguridad. Instalamos el programa reflector"
   pause_function
   sudo cp -vf /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist.backup
-  sudo pacman -S reflector --noconfirm
+  sudo pacman -Sy reflector 
   sudo reflector --verbose --latest 5 --sort rate --save /etc/pacman.d/mirrorlist
-  sudo pacman -Syy --noconfirm
+  sudo pacman -Syy 
 
   #AURhelper
   write_header "5 - INSTALACION DE AUR-HELPER - https://gumerlux.github.io/Blog.GumerLuX/"
@@ -291,7 +292,7 @@ select_root(){
   Durante la instalacion de 'yay' os pide el paswword de usuario."
   echo -e " ${Red} Estar atentos si se pasa, no se finaliza la instalacion y se para${fin}"
   pause_function
-  sudo pacman -S git --noconfirm
+  sudo pacman -S git 
   git clone https://aur.archlinux.org/yay.git
   cd yay
   makepkg -si
@@ -307,13 +308,10 @@ select_root(){
   pause_function
   cp /etc/pacman.conf /etc/pacman.conf.olg
   sudo sed -i "/Color/s/^#//g" /etc/pacman.conf
-<<<<<<< HEAD
   sudo sed -i "/[multilib]/s/^#//g" /etc/pacman.conf
   sudo sed -i "37i ILoveCandy" /etc/pacman.conf
   sudo sed -i "96i \Include = /etc/pacman.d/mirrorlist" /etc/pacman.conf
-=======
   sudo sed -i "93i \Include = /etc/pacman.d/mirrorlist" /etc/pacman.conf
->>>>>>> b860147705e0ee671db16bde0e7cf342756a6941
 
   # Dar color a nano
   write_header "4.B - PONEMOS COLOR A NANO - https://gumerlux.github.io/Blog.GumerLuX/"

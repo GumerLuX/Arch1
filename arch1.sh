@@ -1,5 +1,5 @@
 #!/bin/bash
-#version: 0.1
+#version: 0.2
 # https://github.com/GumerLuX/Arch1.git
 #shellcheck disable=SC2162
 
@@ -318,7 +318,7 @@ Pues vamos a ello y continuemos."
   print_info "Se copiará una copia del script Arch1 en el directorio / root de su nuevo sistema"
   pause_function
   echo
-  cp -R /root/Arch1 /mnt/root
+  cp -R /root/Arch1 /mnt/root /mnt/home/$usuario
   echo
   print_info "Desmontando particiones"
   pause_function
