@@ -78,6 +78,7 @@ pause_function
 #IDENTIFICACION DEL DISCO
   write_header "DISCO - Identificamos el nombre del disco - https://gumerlux.github.io/Blog.GumerLuX/"
   print_info "Lanzamos el comando fdisk para identificacion del disco"
+  print_info "Vamos a crear particiones para un disco de 20G en una VirtualBox"
   fdisk -l
   pause_function
   write_header "DISCO - Identificamos el nombre del disco"
@@ -106,7 +107,7 @@ pause_function
 #ELEGIMOS EL TAMAÑO DE LA PARTICIÓN ROOT
   write_header "PARTICIÓN ROOT - https://gumerlux.github.io/Blog.GumerLuX/"
   print_info "  Elegimos el tamaño de la partición del sistema 'root'.
-  ej: 27.5
+  ej: 17.5
   La G en Mayúscula = gigas."
   echo
   read p_root
@@ -179,7 +180,6 @@ pause_function
   timedatectl list-timezones | grep "$ZONE" | sed 's/^.*\///' | tr '\n' ' '| xargs -n5 | awk '{print $5"\t\t" $3"\t"$4}' |column -t | more
   echo
   read SUBZONE
-  echo
   pause_function
 
 ##EDITANDO LOCALES
@@ -318,7 +318,7 @@ Pues vamos a ello y continuemos."
   print_info "Se copiará una copia del script Arch1 en el directorio / root de su nuevo sistema"
   pause_function
   echo
-  cp -R /root/Arch1 /mnt/root /mnt/home/$usuario
+  cp -rp /root/Arch1 /mnt/root /
   echo
   print_info "Desmontando particiones"
   pause_function

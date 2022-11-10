@@ -6,7 +6,7 @@
 #VARIABLES
 #checklist=( 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 )
 #es
-#Bold=$(tput bold)
+Bold=$(tput bold)
 Green="\e[0;32m\033[1m"
 Red="\e[0;31m\033[1m"
 Blue="\e[0;34m\033[1m"
@@ -15,8 +15,8 @@ Cyan="\e[0;36m\033[1m"
 Light="\e[96m\033[1m"
 Gray="\e[0;37m\033[1m"
 fin="\e[0m"
-#BGreen=${Bold}${Green}
-#Reset=$(tput sgr0)
+BGreen=${Bold}${Green}
+Reset=$(tput sgr0)
 
 
 ## Estilos
@@ -127,11 +127,11 @@ install_grafica(){
 install_escritorio(){
     while true; do  
   write_header "CONFIGURACION DEL SISTEMA GRAFICO - https://gumerlux.github.io/Blog.GumerLuX/"
-  print_info "  Tenemos 6º opciones para elegir:"
+  print_info "  Tenemos 4º opciones para elegir:"
   echo
   echo -e "   1.Escritorio${Yellow} Xfce ${fin}"
   echo -e "   2.Escritorio${Yellow} Gnome ${fin}"
-  echo -e "   3.Escritorio${Yellow} Kde Plasma ${fin}"
+  echo -e "   3.Escritorio${Yellow} Kde Plasma minima ${fin}"
   echo -e "   4.Escritorio${Yellow} Cinnamon ${fin}"
   echo
   echo    "   b) Atras"
@@ -150,9 +150,12 @@ install_escritorio(){
         systemctl enable gdm.service
         ;;
         3)
-        sudo pacman -Sy plasma kde-applications
+        pause_function
+        sudo pacman -Sy plasma-desktop plasma-meta
         sudo pacman -Sy plasma-wayland-session ffmpegthumbs discover packagekit-qt5
+        pause_function
         systemctl enable sddm.service
+        pause_function
         ;;
         4)
         sudo pacman -Sy cinnamon
@@ -172,6 +175,10 @@ install_escritorio(){
   done
 }
 
+
+
+
+    
 #POST INSTALACION MENU
 	write_header "Bienvenido al instalador de ${Cyan}ARCHLINUX${fin} Creado por ${Green}GumerLuX${fin} https://gumerlux.github.io/Blog.GumerLuX/"
 	print_info  "	Para empezar a utilizar el sistema hay que configurar unos parametos:
@@ -195,7 +202,7 @@ select_root(){
   write_header "CONFIGURACION ROOT - https://gumerlux.github.io/Blog.GumerLuX/"
   print_info "  Editamos sudoers, descomentanos  #%wheel ALL=(ALL) ALL
   Para poder dar permisos sudo, al usuario."
-  sed -i '/%wheel ALL=(ALL) ALL/s/^#//' /etc/sudoers
+  sed -i '/%wheel ALL=(ALL:ALL) ALL/s/^#//' /etc/sudoers
   pause_function
 
   #Instalamos codecs de audio
@@ -230,7 +237,7 @@ select_root(){
   print_info "Se copiará una copia del script Arch1 en el directorio / home/user de su nuevo sistema"
   pause_function
   echo
-  cp -R /root/Arch1 ~/
+  cp -rp /root/Arch1 ~/
   echo
   print_info "Saliendo del script"
   return
@@ -294,8 +301,10 @@ select_root(){
   pause_function
   sudo pacman -S git 
   git clone https://aur.archlinux.org/yay.git
+  pause_function
   cd yay
   makepkg -si
+  cd ..
 
   # Configuracion de Pacman, color y ponemos el comococos en la barra
   write_header "5.A - CONFIGURACION DE PACMAN - https://gumerlux.github.io/Blog.GumerLuX/"
@@ -306,9 +315,9 @@ select_root(){
         [multilib]
         include /ete/pacman.d/mirrorlist"
   pause_function
-  cp /etc/pacman.conf /etc/pacman.conf.olg
+  sudo cp -vf /etc/pacman.conf /etc/pacman.conf.olg
   sudo sed -i "/Color/s/^#//g" /etc/pacman.conf
-  sudo sed -i "/[multilib]/s/^#//g" /etc/pacman.conf
+  #sudo sed -i "/[multilib]/s/^#//g" /etc/pacman.conf
   sudo sed -i "37i ILoveCandy" /etc/pacman.conf
   sudo sed -i "96i \Include = /etc/pacman.d/mirrorlist" /etc/pacman.conf
   sudo sed -i "93i \Include = /etc/pacman.d/mirrorlist" /etc/pacman.conf
@@ -325,6 +334,7 @@ select_root(){
   print_info  " En Linux tenemos muchos entornos graficos:
   En este escript solo mostrare estos cuatro,'xfce, gnome, Plasma, cinnamon'.
   Escoge uno para la instalacion."
+  pause_function
   install_escritorio
 
   #FIN DE INSTALACION
