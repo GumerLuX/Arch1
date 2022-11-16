@@ -88,26 +88,26 @@ pause_function
   pause_function
 
 #ELEGIMOS EL FORMATO: ms2 o gpt
-  write_header " FORMATO - Elegimos el formato de nuestro disco: - https://gumerlux.github.io/Blog.GumerLuX/"
-  print_info "  Para MS2 escribimos 'o'.
-  Para GPT escribimos 'g'"
-  echo
-  read format
-  pause_function
+#  write_header " FORMATO - Elegimos el formato de nuestro disco: - https://gumerlux.github.io/Blog.GumerLuX/"
+#  print_info "  Para MS2 escribimos 'o'.
+#  Para GPT escribimos 'g'"
+#  echo
+#  read format
+#  pause_function
 
 #ELEGIMOS EL TAMAÑO DE LA PARTICIÓN BOOT
-  write_header " PARTICIÓN BOOT -  Elegimos el tamaño de la particion 'boot' - https://gumerlux.github.io/Blog.GumerLuX/"
-  print_info "  Elegimos el tamaño de la partición  'boot'.
-  ej: 500M:
-  La M en Mayuscula = megas."
-  echo
-  read p_boot
-  pause_function
+#  write_header " PARTICIÓN BOOT -  Elegimos el tamaño de la particion 'boot' - https://gumerlux.github.io/Blog.GumerLuX/"
+#  print_info "  Elegimos el tamaño de la partición  'boot'.
+#  ej: 500M:
+#  La M en Mayuscula = megas."
+#  echo
+#  read p_boot
+#  pause_function
 
 #ELEGIMOS EL TAMAÑO DE LA PARTICIÓN ROOT
   write_header "PARTICIÓN ROOT - https://gumerlux.github.io/Blog.GumerLuX/"
   print_info "  Elegimos el tamaño de la partición del sistema 'root'.
-  ej: 17.5
+  ej: 18G
   La G en Mayúscula = gigas."
   echo
   read p_root
@@ -125,17 +125,18 @@ pause_function
 #FORMATEAR LAS PARTICIONES
   write_header "FORMATEAR LAS PARTICIONES - https://gumerlux.github.io/Blog.GumerLuX/"
   print_info "  Tenemos que dar formato a las particiones creadas:
+  Para la particion boot, utilizaremos la de Windows.
   Para eso tenemos que elegir en que partición las ponemos:"
+#  echo
+#  echo -e "${Gray}""Indica el disco para formatear la partición ${Yellow}boot${fin} ej: sda1""${fin}"
+#  echo
+#  read disco1
   echo
-  echo -e "${Gray}""Indica el disco para formatear la partición ${Yellow}boot${fin} ej: sda1""${fin}"
-  echo
-  read disco1
-  echo
-  echo -e "${Gray}""Indica el disco para formatear la partición ${Yellow}root${fin} ej: sda2""${fin}"
+  echo -e "${Gray}""Indica el disco para formatear la partición ${Yellow}root${fin} ej: sda5""${fin}"
   echo
   read disco2
   echo
-  echo -e "${Gray}""Indica el disco para formatear la partición ${Yellow}swap${fin} ej: sda3""${fin}"
+  echo -e "${Gray}""Indica el disco para formatear la partición ${Yellow}swap${fin} ej: sda6""${fin}"
   echo
   read disco3
   pause_function
@@ -224,29 +225,30 @@ pause_function
 mount -o remount,size=2G /run/archiso/cowspace
 loadkeys "$idioma"
 # Particion del disco a 'MS2' o 'GPT'
-echo -e "$format\n w" | fdisk /dev/"$disco"
+#echo -e "$format\n w" | fdisk /dev/"$disco"
 # Particion boot Tipo (1) "n\np\n1\n\n+$p_boot\n t\n1\n1\n w"
-echo -e "n\np\n1\n\n+$p_boot\n t\n1\n1\n " | fdisk /dev/"$disco"
+#echo -e "n\np\n1\n\n+$p_boot\n t\n1\n1\n " | fdisk /dev/"$disco"
 # Particion del sistema Tipo(20)
-echo -e "n\np\n2\n\n+$p_root\n w" | fdisk /dev/"$disco"
+echo -e "n\np\n2\n\n+$p_root\n t\n3\n20\n w" | fdisk /dev/"$disco"
 # Particion swap Tipo (19)
 echo -e "n\np\n3\n\n+$p_swap\n t\n3\n19\n w" | fdisk /dev/"$disco"
 # Formateando particiones boot
-mkfs.ext2 -L boot /dev/"$disco1"
+#mkfs.ext2 -L boot /dev/"$disco1"
 mkfs.ext4 -L KDE /dev/"$disco2"
 mkswap -L swap /dev/"$disco3"
 swapon /dev/"$disco3"
 # Montando particiones
 mount /dev/"$disco2" /mnt
-mkdir /mnt/boot /mnt
+mkdir -p /mnt/boot
 mount /dev/"$disco1" /mnt/boot
 
 if [ "$sistema" = "1" ] 
     then
-	pacstrap /mnt base base-devel linux linux-headers linux-firmware grub os-prober ntfs-3g networkmanager gvfs gvfs-afc gvfs-mtp xdg-user-dirs nano dhcpcd f2fs-tools espeakup brltty jfsutils logrotate netctl reiserfsprogs s-nail usbutils vi openresolv --noconfirm
+  pacstrap -i /mnt base base-devel linux linux-firmware
+	#pacstrap /mnt base base-devel linux linux-headers linux-firmware grub os-prober ntfs-3g networkmanager gvfs gvfs-afc gvfs-mtp xdg-user-dirs nano dhcpcd f2fs-tools espeakup brltty jfsutils logrotate netctl reiserfsprogs s-nail usbutils vi openresolv --noconfirm
 elif [ "$sistema" = "2" ]
     then
-        pacstrap /mnt base base-devel linux-hardened linux-hardened-headers linux-firmware grub os-prober ntfs-3g networkmanager gvfs gvfs-afc gvfs-mtp xdg-user-dirs nano dhcpcd f2fs-tools espeakup brltty jfsutils logrotate netctl reiserfsprogs s-nail usbutils vi openresolv --noconfirm
+        pacstrap /mnt base base-devel linux-hardened linux-hardened-headers linux-firmware grub os-prober ntfs-3g networkmanager gvfs gvfs-afc gvfs-mtp xdg-user-dirs nano dhcpcd f2fs-tools espeakup brltty jfsutils logrotate netctl reiserfsprogs s-nail usbutils vi openresolv netctl --noconfirm
 elif [ "$sistema" = "3" ]
     then
         pacstrap /mnt base base-devel linux-lts linux-lts-headers linux-firmware grub os-prober ntfs-3g networkmanager gvfs gvfs-afc gvfs-mtp xdg-user-dirs nano dhcpcd f2fs-tools espeakup brltty jfsutils logrotate netctl reiserfsprogs s-nail usbutils vi openresolv --noconfirm
@@ -267,8 +269,27 @@ arch-chroot /mnt hwclock -w
 # Configurando el teclado
 echo KEYMAP="$idioma" > /mnt/etc/vconsole.conf
 # Configurando GRUB
-arch-chroot /mnt grub-install /dev/"$disco"
-arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+#arch-chroot /mnt grub-install /dev/"$disco"
+#arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+#Instalar systemd-boot:
+
+#INSTALACION systen-boot - UEFI
+  write_header "INSTALACION systen-boot - UEFI - https://gumerlux.github.io/Blog.GumerLuX/"
+  print_info "  Vamos a instalar el cargador de arranque bootctl.
+Pues vamos a ello y continuemos."
+bootctl --path=/boot install
+echo "default arch" >> /boot/loader/loader.conf
+echo "timeout 3" >> /boot/loader/loader.conf
+echo "editor 0" >> /boot/loader/loader.conf
+echo -e $(blkid -s PARTUUID -o value /dev/$p_root) > /boot/loader/entries/arch.conf
+sed -i '1ititle ArchLinux' /boot/loader/entries/arch.conf
+sed -i '2ilinux /vmlinuz-linux' /boot/loader/entries/arch.conf
+sed -i '3iinitrd /initramfs-linux.img' /boot/loader/entries/arch.conf
+sed -i '4 /^/options root=PARTUUID=/' /boot/loader/entries/arch.conf
+sed -i '4 s/$/ rw/' /boot/loader/entries/arch.conf 
+#Descomentamos el archivo
+sed -i '/GRUB_DISABLE_OS_PROBER/s/^#//g' /etc/default/grub
+  pause_function
 
 #FIN DE INSTALACIÓN BASE
   write_header "FIN DE INSTALACIÓN BASE - https://gumerlux.github.io/Blog.GumerLuX/"

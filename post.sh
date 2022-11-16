@@ -237,7 +237,8 @@ select_root(){
   print_info "Se copiará una copia del script Arch1 en el directorio / home/user de su nuevo sistema"
   pause_function
   echo
-  cp -rp /root/Arch1 ~/
+  cp -rp /root/arch1 ~/arch1
+  chown sindo ~/arch1
   echo
   print_info "Saliendo del script"
   return
@@ -300,7 +301,7 @@ select_root(){
   echo -e " ${Red} Estar atentos si se pasa, no se finaliza la instalacion y se para${fin}"
   pause_function
   sudo pacman -S git 
-  git clone https://aur.archlinux.org/yay.git
+  sudo git clone https://aur.archlinux.org/yay.git
   pause_function
   cd yay
   makepkg -si
