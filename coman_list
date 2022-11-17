@@ -1,0 +1,85 @@
+# Poniendo el teclado español
+loadkeys es
+
+# Añadiendo memoria al sistema
+mount -o remount,size=2G /run/archiso/cowspace
+
+# Examinado el disco
+fdisk -l /dev/sda
+
+# Creando Root/
+echo -e "n\np\n5\n\n+18\n t\n5\n20\n w" | fdisk /dev/sda
+
+# Creando Swap
+echo -e "n\np\n6\n\n\n t\n6\n19\n w" | fdisk /dev/sda
+
+# Formateando particiones boot y swap
+mkfs.ext4 -L KDE /dev/sda5
+mkswap -L swap /dev/sda6
+swapon /dev/sda6
+
+# Montando particiones
+mount /dev/sda5 /mnt
+mkdir -p /mnt/boot
+mount /dev/sda1 /mnt/boot
+
+# Instalando base
+pacstrap -i /mnt base base-devel linux linux-firmware --noconfirm
+
+# Configurando el sistema
+genfstab -pU /mnt >> /mnt/etc/fstab
+
+# Entrar en sistema como arch-chroot
+arch-chroot
+
+# Poner nombre a la maquina
+echo sindo > /mnt/etc/hostname
+
+# Configurando el relol
+mnt hwclock -w
+
+# Hacer un link simbolico
+mnt ln -s /usr/share/zoneinfo/Europe/Madrid /etc/localtime
+
+# Editando locales "LANG=es_ES.UTF-8"
+sed -i "es_ES.UTF-8/s/^#//g" /mnt/etc/locale.gen
+# Generamos el archivo locale.gen con el siguiente comando:
+locale-gen
+
+# # Configurando el relol
+arch-chroot /mnt hwclock -w
+
+# Configurando el teclado
+echo KEYMAP="es" > /mnt/etc/vconsole.conf
+
+#Instalar systemd-boot:
+
+# INSTALACION systen-boot - UEFI
+# Vamos a instalar el cargador de arranque bootctl.
+
+bootctl --path=/boot install
+echo "default arch" >> /boot/loader/loader.conf
+echo "timeout 3" >> /boot/loader/loader.conf
+echo "editor 0" >> /boot/loader/loader.conf
+echo -e $(blkid -s PARTUUID -o value /dev/$f_root) > /boot/loader/entries/arch.conf
+sed -i '1ititle ArchLinux' /boot/loader/entries/arch.conf
+sed -i '2ilinux /vmlinuz-linux' /boot/loader/entries/arch.conf
+sed -i '3iinitrd /initramfs-linux.img' /boot/loader/entries/arch.conf
+sed -i '4 /^/options root=PARTUUID=/' /boot/loader/entries/arch.conf
+sed -i '4 s/$/ rw/' /boot/loader/entries/arch.conf
+
+#Descomentamos el archivo
+sed -i '/GRUB_DISABLE_OS_PROBER/s/^#//g' /etc/default/grub
+
+#CONTRASEÑA ROOT
+passwd
+
+#CREAR CUENTA DE USUARIO y CONTRASEÑA
+passwd sindo
+
+# Crear usuario
+useradd -m -g users -G audio,lp,optical,storage,video,wheel,games,power,scanner -s /bin/bash "$usuario"
+
+#FIN DE INSTALACION desmontando
+umount -R /mnt
+reboot
