@@ -8,10 +8,10 @@ mount -o remount,size=2G /run/archiso/cowspace
 fdisk -l /dev/sda
 
 # Creando Root/
-echo -e "n\np\n5\n\n+18\n t\n5\n20\n w" | fdisk /dev/sda
+echo -e "n\np\n5\n\n+18G\n t\n5\n20\n p" | fdisk /dev/sda
 
 # Creando Swap
-echo -e "n\np\n6\n\n\n t\n6\n19\n w" | fdisk /dev/sda
+echo -e "n\np\n6\n\n\n t\n6\n19\n p" | fdisk /dev/sda
 
 # Formateando particiones boot y swap
 mkfs.ext4 -L KDE /dev/sda5
