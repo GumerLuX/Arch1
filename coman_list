@@ -1,3 +1,6 @@
+# Instalacion echa en VirtualBox con Windows 10 y ArchLinux
+# Con un disco de 50G y añaadiendo espacio a la particion de Windows de "20480M"=20G sin formatear
+
 # Poniendo el teclado español
 loadkeys es
 
@@ -30,29 +33,27 @@ pacstrap -i /mnt base base-devel linux linux-firmware --noconfirm
 genfstab -pU /mnt >> /mnt/etc/fstab
 
 # Entrar en sistema como arch-chroot
-arch-chroot
+arch-chroot /mnt
 
 # Poner nombre a la maquina
 echo sindo > /mnt/etc/hostname
 
 # Configurando el relol
-mnt hwclock -w
+hwclock -w
 
 # Hacer un link simbolico
-mnt ln -s /usr/share/zoneinfo/Europe/Madrid /etc/localtime
+ln -s /usr/share/zoneinfo/Europe/Madrid /etc/localtime
 
 # Editando locales "LANG=es_ES.UTF-8"
-sed -i "es_ES.UTF-8/s/^#//g" /mnt/etc/locale.gen
+sed -i "es_ES.UTF-8/s/^#//g" /etc/locale.gen
+
 # Generamos el archivo locale.gen con el siguiente comando:
 locale-gen
-
-# # Configurando el relol
-arch-chroot /mnt hwclock -w
 
 # Configurando el teclado
 echo KEYMAP="es" > /mnt/etc/vconsole.conf
 
-#Instalar systemd-boot:
+#Instalar systemd-boot: -->
 
 # INSTALACION systen-boot - UEFI
 # Vamos a instalar el cargador de arranque bootctl.
@@ -68,17 +69,14 @@ sed -i '3iinitrd /initramfs-linux.img' /boot/loader/entries/arch.conf
 sed -i '4 /^/options root=PARTUUID=/' /boot/loader/entries/arch.conf
 sed -i '4 s/$/ rw/' /boot/loader/entries/arch.conf
 
-#Descomentamos el archivo
-sed -i '/GRUB_DISABLE_OS_PROBER/s/^#//g' /etc/default/grub
-
 #CONTRASEÑA ROOT
 passwd
 
 #CREAR CUENTA DE USUARIO y CONTRASEÑA
-passwd sindo
-
 # Crear usuario
+
 useradd -m -g users -G audio,lp,optical,storage,video,wheel,games,power,scanner -s /bin/bash "$usuario"
+passwd sindo
 
 #FIN DE INSTALACION desmontando
 umount -R /mnt
