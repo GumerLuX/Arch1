@@ -1,0 +1,121 @@
+# Instalacion echa en Intel NUC Skull Canyon con Windows 10 y ArchLinux
+# En modo UEFI
+# Cargador de arranque System-Boot (bootctl)
+# Ls red por via WIFI (iwctl)
+# Con un disco de 225G y añaadiendo espacio a la particion de Windows de "51200"=50G sin formatear
+# Instalacion hecha en un Intel Canyon
+# Procesador Intel(R) Core(TM) i7-6770HQ CPU @ 2.60GHz   2.59 GHz
+# RAM Instalada 16GB
+----------------------------------------------------------
+1- Ponemos el teclado en español
+~# Loadkeys es
+----------------------------------------------------------
+2- Activamos el wifi escribimos
+iwctl
+# se activa una consola de red:		-->[iwd]# help "para saber los comandos" "iwctl --help"
+# Estos son los comandos a utilizar
+[iwd] device list                  #-->lista las estaciones "device"
+[iwd] station device scan          #-->lista 
+[iwd] station device get-networks  #-->lista los mombra de las comecxiones "SSID"
+----------------------------------------------------------
+[iwd] station wlan0 connect MiFibra-6990
+contraseña:SC9VRsiT
+----------------------------------------------------------
+# iwctl --passphrase=PASSPHRASE station DEVICE connect SSID
+----------------------------------------------------------
+iwctl --passphrase=SC9VRsiT station wlan0 connect MiFibra-6990
+[iwd] exit                         -->para salir
+----------------------------------------------------------
+# Descargamos el scrip de github
+https://github.com/GumerLuX/arch.git
+----------------------------------------------------------
+
+# Añadiendo memoria al sistema
+mount -o remount,size=2G /run/archiso/cowspace
+
+# Examinado el disco
+fdisk -l /dev/sda
+
+# Creando Root/ "20G = 20480M"
+echo -e "n\np\n5\n\n+18G\n t\n5\n20\n p" | fdisk /dev/sda
+
+# Creando home/ "26G = 26624M"
+echo -e "n\np\n6\n\n+18G\n t\n6\n20\n p" | fdisk /dev/sda
+
+# Creando Swap "4G = 4096M"
+echo -e "n\np\n7\n\n\n t\n7\n19\n p" | fdisk /dev/sda
+
+# Formateando particiones boot y swap
+mkfs.ext4 -L root /dev/sda5
+mkfs.ext4 -L home /dev/sda6
+mkswap -L swap /dev/sda7
+swapon /dev/sda7
+
+# Montando particiones
+mount /dev/sda5 /mnt
+mkdir -p /mnt/home
+mount /dev/sda6 /mnt/home
+mkdir -p /mnt/boot
+mount /dev/sda1 /mnt/boot
+
+# Instalando base
+pacstrap -i /mnt base base-devel linux linux-firmware intel-ucode --noconfirm
+----------------------------------------------------------
+pacstrap /mnt base base-devel efibootmgr os-prober ntfs-3g networkmanager grub gvfs gvfs-afc gvfs-mtp xdg-user-dirs linux linux-firmware nano man-db man-pages texinfo dhcpcd netctl wpa_supplicant dialog --noconfirm
+----------------------------------------------------------
+man-db man-pages texinfo
+mesa xf86-video-intel vulkan-intel vulcan-icd-loader
+
+# Configurando el sistema
+genfstab -pU /mnt >> /mnt/etc/fstab
+
+# Entrar en sistema como arch-chroot
+# arch-chroot /mnt
+
+# Poner nombre a la maquina
+arch-chroot /mnt echo sindo > /mnt/etc/hostname
+
+# Configurando el relol
+arch-chroot /mnt hwclock -w
+
+# Hacer un link simbolico
+arch-chroot /mnt ln -s /usr/share/zoneinfo/Europe/Madrid /mnt/etc/localtime
+
+# Editando locales "LANG=es_ES.UTF-8"
+sed -i '/es_ES.UTF/s/^#//g' /mnt/etc/locale.gen
+
+# Generamos el archivo locale.gen con el siguiente comando:
+locale-gen
+
+# Configurando el teclado
+echo KEYMAP=es > /mnt/etc/vconsole.conf
+
+#Instalar systemd-boot: -->
+
+# INSTALACION systen-boot - UEFI
+# Vamos a instalar el cargador de arranque bootctl.
+
+bootctl --path=/boot install
+echo "default arch" >> /boot/loader/loader.conf
+echo "timeout 3" >> /boot/loader/loader.conf
+echo "editor 0" >> /boot/loader/loader.conf
+echo -e $(blkid -s PARTUUID -o value /dev/$f_root) > /boot/loader/entries/arch.conf
+sed -i '1ititle ArchLinux' /boot/loader/entries/arch.conf
+sed -i '2ilinux /vmlinuz-linux' /boot/loader/entries/arch.conf
+sed -i '3iinitrd  /intel-ucode.img' /boot/loader/entries/arch.conf
+sed -i '4iinitrd /initramfs-linux.img' /boot/loader/entries/arch.conf
+sed -i '5 /^/options root=PARTUUID=/' /boot/loader/entries/arch.conf
+sed -i '5 s/$/ rw/' /boot/loader/entries/arch.conf
+
+#CONTRASEÑA ROOT
+passwd
+
+#CREAR CUENTA DE USUARIO y CONTRASEÑA
+# Crear usuario
+
+useradd -m -g users -G audio,lp,optical,storage,video,wheel,games,power,scanner -s /bin/bash "$usuario"
+passwd sindo
+
+#FIN DE INSTALACION desmontando
+umount -R /mnt
+reboot
