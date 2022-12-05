@@ -270,6 +270,9 @@ echo KEYMAP="$idioma" > /mnt/etc/vconsole.conf
 arch-chroot /mnt grub-install /dev/"$disco"
 arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
 
+#Descomentamos el archivo
+sed -i '/GRUB_DISABLE_OS_PROBER/s/^#//g' /etc/default/grub
+
 #FIN DE INSTALACIÓN BASE
   write_header "FIN DE INSTALACIÓN BASE - https://gumerlux.github.io/Blog.GumerLuX/"
   print_info "  Con esto nuestro sistema está instalado.

@@ -1,0 +1,55 @@
+#INSTALL BASE SYSTEM {{{
+pacstrap "${MOUNTPOINT}" base linux linux-headers
+pacstrap "${MOUNTPOINT}" \
+				cryptsetup lvm2 netctl dhcpcd inetutils jfsutils diffutils e2fsprogs \
+				less linux-firmware logrotate man-db man-pages mdadm nano \
+        
+pacman -Sy archlinux-keyring
+pacstrap "${MOUNTPOINT}" base-devel parted btrfs-progs f2fs-tools net-tools --needed
+pacstrap "${MOUNTPOINT}" iw wireless_tools wpa_supplicant dialog --needed
+arch_chroot "systemctl enable dhcpcd@${WIRED_DEV}.service"
+pacstrap "${MOUNTPOINT}" alsa-utils --needed
+		arch_chroot "systemctl enable espeakup.service"
+arch_chroot "mkinitcpio -p linux-"
+
+
+
+
+#bootctl
+
+echo -e "default  arch\ntimeout  5\neditor  0" > /boot/loader/loader.conf
+
+#Como conseguir el partuuid
+
+partuuid=$(blkid -s PARTUUID -o value /dev/sda5)
+echo -e "title\tArch Linux\nlinux\t/vmlinuz-linux\ninitrd\t/initramfs-linux.img\noptions\troot=PARTUUID=${partuuid} rw" > /boot/loader/entries/arch.conf
+
+# intel
+echo -e "title\tArch Linux\nlinux\t/vmlinuz-linux\ninitrd\t/intel-ucode.img\ninitrd\t/initramfs-linux.img\noptions\troot=PARTUUID=${partuuid} rw" > /boot/loader/entries/arch.conf
+
+pacman -Sy archlinux-keyring
+base linux linux-headers
+cryptsetup lvm2 netctl dhcpcd inetutils jfsutils diffutils e2fsprogs
+less linux-firmware logrotate man-db man-pages mdadm nano
+base-devel parted btrfs-progs f2fs-tools net-tools
+iw wireless_tools wpa_supplicant dialog
+
+systemctl enable espeakup.service
+mkinitcpio -p linux
+
+#IGNORAR ERRORES
+https://www.shellcheck.net/
+
+SC2291
+
+
+#LOCALES
+tzselect
+
+ls /usr/share/zoneinfo/
+echo -e "escribe tu zona ej: Europe"
+read ZONA
+
+ls /usr/share/zoneinfo/$ZONA
+echo -e "escribe tu subzona ej: Madrid"
+read SUBZONA
