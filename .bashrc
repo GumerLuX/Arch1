@@ -1,8 +1,3 @@
-CYAN="\[$(tput setaf 2)\]"
-RESET="\[$(tput sgr0)\]"
-
-PS1="${CYAN}Scrip@Arch_install${RESET}~# "
-
 if [ "$TERM" = "Archlinux" ]; then
 	printf %b '\e[40m' '\e[8]' # set default background to color 0 'dracula-bg'
 	printf %b '\e[37m' '\e[8]' # set default foreground to color 7 'dracula-fg'

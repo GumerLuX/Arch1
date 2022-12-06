@@ -260,9 +260,9 @@ print_info "
         Vamos a instalar el cargador de arranque bootctl.
         Instalamos el bootctl y Creamos el archivo de configuracion 'loader.conf'
         Pues vamos a ello y continuemos."
-escribe "bootctl --path=/boot install"
-echo -E 'Escribe: echo -e "default  arch\ntimeout  5\neditor  0" > /boot/loader/loader.conf'
-escribe2 "cat /boot/loader/loader.conf" "==> Para comprobar el archivo"
+escribe "arch-chroot /mnt bootctl --path=/boot install"
+echo -E 'Escribe: echo -e "default  arch\ntimeout  5\neditor  0" > /mnt/boot/loader/loader.conf'
+escribe2 "cat /mnt/boot/loader/loader.conf" "==> Para comprobar el archivo"
 bash
 
 write_header "INSTALACION systen-boot - UEFI"
@@ -270,8 +270,8 @@ print_info "
         Editando el partuuid creando una variable
         Y creamos el archivo de configuracion arch.conf"
 echo -E "Escribe: partuuid=\$(blkid -s PARTUUID -o value /dev/"$root")"
-echo -E 'Escribe: echo -e "title\tArch Linux\nlinux\t/vmlinuz-linux\ninitrd\t/initramfs-linux.img\noptions\troot=PARTUUID=${partuuid} rw" > /boot/loader/entries/arch.conf'
-escribe2 "cat /boot/loader/entries/arch.conf" "==> Para comprobar el archivo"
+echo -E 'Escribe: echo -e "title\tArch Linux\nlinux\t/vmlinuz-linux\ninitrd\t/initramfs-linux.img\noptions\troot=PARTUUID=${partuuid} rw" > /mnt/boot/loader/entries/arch.conf'
+escribe2 "cat /mnt/boot/loader/entries/arch.conf" "==> Para comprobar el archivo"
 bash
 
 # STABLECER CONTRASEÑA DE ADMINISTRADOR (root)
