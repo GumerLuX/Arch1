@@ -1,0 +1,12 @@
+#ELEGIMOS PARTICION Y TAMAÑO DE LA SWAP
+  write_header "LEGIMOS PARTICION Y TAMAÑO DE LA SWAP-  https://gumerlux.github.io/Blog.GumerLuX/"
+  print_info "Creamos la particion swap. la activamos y anotamos la particion.\nPor defecto es el resto de la particion."
+  echo
+  pause_function
+  print_info "Creamos la particion swap y anotamos la particion"
+  echo -e "n\np\n5\n\n+$t_root\n t\n5\n20\n n\np\n6\n\n\n t\n6\n19\n p" | fdisk /dev/"$disco"
+  print_info "La particion swap creada es, ej; sda6"
+  read p_swap
+  print_info "El tamaño de la swap creada es, ej; 2G"
+  read t_swap
+  pause_function
