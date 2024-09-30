@@ -1,0 +1,14 @@
+#ELEGIMOS EL TAMAÑO DE LA PARTICIÓN ROOT 
+  write_header "PARTICIÓN ROOT - https://gumerlux.github.io/Blog.GumerLuX/"
+  print_info "  Elegimos el tamaño de la partición del sistema 'root'.
+  ej: 18G
+  La G en Mayúscula = gigas."
+  echo
+  print_info  "Que tamaño damos a la particion root"
+  read t_root
+  pause_function
+  write_header "Creamos la particion root y anotamos la particion"
+  echo -e "n\np\n5\n\n+$t_root\n t\n5\n20\n p" | fdisk /dev/"$disco"
+  print_info "anotamos la particion ej; sda5"
+  read p_root
+  pause_function
